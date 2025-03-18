@@ -208,13 +208,13 @@ nodered:
       memory: "1Gi"
 
 citrinosIngress:
-  enabled: false
+  enabled: true
   name: citrineos-ingress
   clusterIssuer: "letsencrypt-prod"
   className: nginx
   tlsHosts:
   - dashboard.nrgsurf.de
-  - grafana.nrgsurf.de
+  - everest.nrgsurf.de
   secretName: citrinos-privatenrg-key
   rules:
   - host: dashboard.nrgsurf.de
@@ -233,7 +233,7 @@ citrinosIngress:
         port: 1880
 
 grafanaIngress:
-  enabled: false
+  enabled: true
   clusterIssuer: "letsencrypt-prod"
   className: nginx
   host: grafana.nrgsurf.de
