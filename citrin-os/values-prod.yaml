@@ -40,6 +40,13 @@ directus:
     tag: v2.0.0 # Image version tag
   replicas: 1 # Number of pod replicas
   port: 8055 # Service port number
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "500Mi"
+    limits:
+      cpu: "1024"
+      memory: "900Mi"
   livenessProbe:
     # Health check configuration
     path: /server/health # Health check endpoint
@@ -70,6 +77,13 @@ citrine:
     repository: aolishchuk/citrine # Docker image location
     tag: v2.0.0
   replicas: 1 # Number of pod replicas
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "900Mi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
   ports:
   # Service ports configuration
   - port: 8080 # Main HTTP port
@@ -166,6 +180,13 @@ manager:
   env:
     targetUrl: "http://citrine:8081"
     mqttPort: "1883"
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "600Mi"
+    limits:
+      cpu: "600m"
+      memory: "1.2Gi"
 
 nodered:
   name: nodered
@@ -178,3 +199,10 @@ nodered:
     targetPort: 1880
   env:
     flows: "/config/config-sil-two-evse-flow.json"
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "800Mi"
+    limits:
+      cpu: "750m"
+      memory: "1Gi"
