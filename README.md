@@ -4,7 +4,7 @@ This guide provides steps to deploy and manage Kubernetes resources using Helm a
 
 Clone the Repo
 ```
-git clone https://github.com/jyothiram266/citirin-k8s-depolyment.git
+git clone https://github.com/stfnrm/nrgsurf-backend-config.git
 ```
 
 ### Prerequisites
