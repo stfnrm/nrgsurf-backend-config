@@ -206,3 +206,37 @@ nodered:
     limits:
       cpu: "750m"
       memory: "1Gi"
+
+citrinosIngress:
+  enabled: false
+  name: citrineos-ingress
+  clusterIssuer: "letsencrypt-prod"
+  className: nginx
+  tlsHosts:
+  - dashboard.nrgsurf.de
+  - grafana.nrgsurf.de
+  secretName: citrinos-privatenrg-key
+  rules:
+  - host: dashboard.nrgsurf.de
+    paths:
+    - path: /
+      pathType: Prefix
+      service:
+        name: directus
+        port: 8055
+  - host: everest.nrgsurf.de
+    paths:
+    - path: /
+      pathType: Prefix
+      service:
+        name: nodered
+        port: 1880
+
+grafanaIngress:
+  enabled: false
+  clusterIssuer: "letsencrypt-prod"
+  className: nginx
+  host: grafana.nrgsurf.de
+  secretName: grafana-tlsnrg-cert
+  service:
+    port: 3000
