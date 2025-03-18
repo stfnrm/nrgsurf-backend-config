@@ -233,7 +233,7 @@ citrinosIngress:
         port: 1880
 
 grafanaIngress:
-  enabled: true
+  enabled: false
   clusterIssuer: "letsencrypt-prod"
   className: nginx
   host: grafana.nrgsurf.de
