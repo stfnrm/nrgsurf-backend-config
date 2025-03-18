@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - grafana.ev.vossmoos.com
+    secretName: grafana-tls-cert # This will be automatically created by cert-manager
+  rules:
+  - host: grafana.ev.vossmoos.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: dev-citrinos-grafana
+            port:
+              number: 3000

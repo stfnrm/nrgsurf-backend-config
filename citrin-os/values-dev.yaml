@@ -1,0 +1,242 @@
+# values-dev.yaml
+# Development environment configuration for CitrinOS
+# This file contains all necessary configurations for running CitrinOS in a development setting
+
+# Enable or disable monitoring stack
+monitoring:
+  enabled: true # Master toggle to enable/disable monitoring stack (Prometheus, Grafana, Loki)
+
+kube-prometheus-stack:
+  grafana:
+    additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki:3100
+      jsonData:
+        timeout: 60
+        maxLines: 1000
+    enabled: true
+    adminUser: "admin@citrineos.com"
+    adminPassword: "CitrineOS!"
+
+  prometheus:
+    enabled: true
+
+  alertmanager:
+    enabled: true
+
+everest: true
+
+# Namespace configuration - Defines the Kubernetes namespace for all components
+namespace:
+  name: citrinos # Name of the Kubernetes namespace where all services will be deployed
+
+# Directus - Headless CMS service configuration
+directus:
+  name: directus # Service name
+  image:
+    repository: aolishchuk/directus # Docker image location
+    tag: v2.0.0 # Image version tag
+  replicas: 1 # Number of pod replicas
+  port: 8055 # Service port number
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "250Mi"
+    limits:
+      cpu: "500"
+      memory: "900Mi"
+  livenessProbe:
+    # Health check configuration
+    path: /server/health # Health check endpoint
+    initialDelaySeconds: 15 # Delay before first health check
+    periodSeconds: 15 # Interval between checks
+    timeoutSeconds: 15 # Timeout for each check
+    failureThreshold: 3 # Number of failures before considering unhealthy
+  env:
+    # Environment variables for Directus
+    APP_NAME: "all" # Application identifier
+    KEY: "1234567890" # Encryption key
+    SECRET: "0987654321" # Secret for sessions/auth
+    ADMIN_EMAIL: "admin@citrine.com" # Admin user email
+    ADMIN_PASSWORD: "CitrineOS!" # Admin user password
+    CONFIG_PATH: "/directus/config.cjs" # Path to config file
+    DB_CLIENT: "pg" # Database type (PostgreSQL)
+    DB_HOST: "ocpp-db" # Database host
+    DB_PORT: "5432" # Database port
+    DB_DATABASE: "citrine" # Database name
+    DB_USER: "citrine" # Database username
+    DB_PASSWORD: "citrine" # Database password
+    WEBSOCKETS_ENABLED: "true" # Enable WebSocket support
+
+# Citrine - Main application service configuration
+citrine:
+  name: citrine # Service name
+  image:
+    repository: aolishchuk/citrine # Docker image location
+    tag: v2.0.0
+  replicas: 1 # Number of pod replicas
+  ports:
+  # Service ports configuration
+  - port: 8080 # Main HTTP port
+  - port: 8081 # Additional service port
+  - port: 8082 # Additional service port
+  - port: 8085 # Additional service port
+  - port: 8443 # HTTPS port
+  - port: 8444 # Additional HTTPS port
+  environment:
+    # Environment variables for Citrine
+    APP_NAME: "all" # Application identifier
+    APP_ENV: "docker" # Environment type
+    CITRINEOS_UTIL_DIRECTUS_TOKEN: "-ssaT85n4S-wVD21LKOCDwvXN5PtnJc0" # Authentication token
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "900Mi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+
+# RabbitMQ - Message broker service configuration
+
+rabbitmq:
+  name: amqp-broker
+  image:
+    repository: rabbitmq
+    tag: 3-management
+  replicas: 1
+  ports:
+  - name: management
+    port: 15672
+  - name: amqp
+    port: 5672
+  auth:
+    username: "guest"
+    password: "guest"
+  persistence:
+    enabled: true
+    size: 1Gi
+    accessMode: ReadWriteOnce
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
+
+# PostgreSQL - Database service configuration
+postgresql:
+  name: ocpp-db # Service name
+  image:
+    repository: citrineos/postgis # Custom PostgreSQL image with PostGIS
+    tag: v1.1.0 # Image version
+  replicas: 1 # Number of pod replicas
+  port: 5432 # Database port
+  initContainer:
+    # Initialization container configuration
+    image: busybox # Utility image for initialization
+    command:
+    # Commands to set up data directory
+    - 'sh'
+    - '-c'
+    - 'mkdir -p /var/lib/postgresql/data/pgdata && chown -R 999:999 /var/lib/postgresql/data/pgdata'
+  database:
+    # Database configuration
+    name: "citrine" # Database name
+    user: "citrine" # Database user
+    password: "citrine" # Database password
+    pgdata: "/var/lib/postgresql/data/pgdata" # Data directory path
+  persistence:
+    # Storage configuration
+    enabled: true # Enable persistent storage
+    size: 100Mi # Storage size
+    accessMode: ReadWriteOnce # Storage access mode
+  livenessProbe:
+    # Health check configuration
+    initialDelaySeconds: 5 # Delay before first health check
+    periodSeconds: 5 # Interval between checks
+    timeoutSeconds: 10 # Timeout for each check
+    failureThreshold: 5 # Number of failures before considering unhealthy
+
+mqtt:
+  name: mqtt-server
+  image:
+    repository: ghcr.io/everest/everest-demo/mqtt-server
+    tag: 0.0.15
+    pullPolicy: IfNotPresent
+  service:
+    port: 1883
+    targetPort: 1883
+
+manager:
+  name: manager
+  image:
+    repository: aolishchuk/everest
+    tag: v1.0.1
+    pullPolicy: IfNotPresent
+  service:
+    port: 8888
+    targetPort: 8888
+  env:
+    targetUrl: "http://citrine:8081"
+    mqttPort: "1883"
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "600Mi"
+    limits:
+      cpu: "600m"
+      memory: "1.2Gi"
+
+nodered:
+  name: nodered
+  image:
+    repository: ghcr.io/everest/everest-demo/nodered
+    tag: 0.0.15
+    pullPolicy: IfNotPresent
+  service:
+    port: 1880
+    targetPort: 1880
+  env:
+    flows: "/config/config-sil-two-evse-flow.json"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "500Mi"
+    limits:
+      cpu: "750m"
+      memory: "1Gi"
+
+citrinosIngress:
+  enabled: false
+  name: citrineos-ingress
+  clusterIssuer: "letsencrypt-prod"
+  className: nginx
+  tlsHosts:
+  - dashboard.ev.vossmoos.com
+  - everest.ev.vossmoos.com
+  secretName: citrinos-private-key
+  rules:
+  - host: dashboard.ev.vossmoos.com
+    paths:
+    - path: /
+      pathType: Prefix
+      service:
+        name: directus
+        port: 8055
+  - host: everest.ev.vossmoos.com
+    paths:
+    - path: /
+      pathType: Prefix
+      service:
+        name: nodered
+        port: 1880
+
+grafanaIngress:
+  enabled: false
+  clusterIssuer: "letsencrypt-prod"
+  className: nginx
+  host: grafana.ev.vossmoos.com
+  secretName: grafana-tls-cert
+  service:
+    port: 3000

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.citrine.name }}
+  namespace: {{ .Values.namespace.name }}
+  annotations:
+    "helm.sh/hook": "post-install"
+    "helm.sh/hook-weight": "3"
+spec:
+  replicas: {{ .Values.citrine.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.citrine.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.citrine.name }}
+    spec:
+      containers:
+      - name: {{ .Values.citrine.name }}
+        image: "{{ .Values.citrine.image.repository }}:{{ .Values.citrine.image.tag }}"
+        ports:
+        {{- range .Values.citrine.ports }}
+        - containerPort: {{ .port }}
+        {{- end }}
+        env:
+        {{- range $key, $value := .Values.citrine.environment }}
+        - name: {{ $key }}
+          value: "{{ $value }}"
+        {{- end }}
+        resources:
+          requests:
+            cpu: {{ .Values.citrine.resources.requests.cpu }}
+            memory: {{ .Values.citrine.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.citrine.resources.limits.cpu }}
+            memory: {{ .Values.citrine.resources.limits.memory }}

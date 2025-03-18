@@ -1,0 +1,15 @@
+{{- if .Values.everest }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mqtt.name | quote }}
+  namespace: {{ .Values.namespace.name | quote }}
+spec:
+  selector:
+    app: {{ .Values.mqtt.name | quote }}
+  ports:
+  - port: {{ .Values.mqtt.service.port }}
+    targetPort: {{ .Values.mqtt.service.targetPort }}
+    protocol: TCP
+  type: ClusterIP
+{{- end }}

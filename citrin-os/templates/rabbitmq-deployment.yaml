@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.rabbitmq.name }}
+  namespace: {{ .Values.namespace.name }}
+  annotations:
+    "helm.sh/hook": "post-install"
+    "helm.sh/hook-weight": "1" 
+spec:
+  replicas: {{ .Values.rabbitmq.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.rabbitmq.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.rabbitmq.name }}
+    spec:
+      containers:
+      - name: rabbitmq
+        image: "{{ .Values.rabbitmq.image.repository }}:{{ .Values.rabbitmq.image.tag }}"
+        ports:
+        {{- range .Values.rabbitmq.ports }}
+        - containerPort: {{ .port }}
+        {{- end }}
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: {{ .Values.rabbitmq.auth.username | quote }}
+        - name: RABBITMQ_DEFAULT_PASS
+          value: {{ .Values.rabbitmq.auth.password | quote }}
+        volumeMounts:
+        - name: rabbitmq-data
+          mountPath: /var/lib/rabbitmq
+        livenessProbe:
+          exec:
+            command: ["rabbitmq-diagnostics", "-q", "ping"]
+          initialDelaySeconds: {{ .Values.rabbitmq.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.rabbitmq.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.rabbitmq.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.rabbitmq.livenessProbe.failureThreshold }}
+      volumes:
+      - name: rabbitmq-data
+        persistentVolumeClaim:
+          claimName: {{ .Values.rabbitmq.name }}-pvc

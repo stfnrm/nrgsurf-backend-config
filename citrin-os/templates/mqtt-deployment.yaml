@@ -1,0 +1,21 @@
+{{- if .Values.everest }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mqtt.name | quote }}
+  namespace: {{ .Values.namespace.name | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.mqtt.name | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.mqtt.name | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.mqtt.name | quote }}
+        image: "{{ .Values.mqtt.image.repository }}:{{ .Values.mqtt.image.tag }}"
+        imagePullPolicy: {{ .Values.mqtt.image.pullPolicy | quote }}
+{{- end }}

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.directus.name }}
+  namespace: {{ .Values.namespace.name }}
+  annotations:
+    "helm.sh/hook": "post-install"
+    "helm.sh/hook-weight": "2"
+spec:
+  replicas: {{ .Values.directus.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.directus.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.directus.name }}
+    spec:
+      containers:
+      - name: {{ .Values.directus.name }}
+        image: "{{ .Values.directus.image.repository }}:{{ .Values.directus.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.directus.port }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.directus.livenessProbe.path }}
+            port: {{ .Values.directus.port }}
+          initialDelaySeconds: {{ .Values.directus.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.directus.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.directus.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.directus.livenessProbe.failureThreshold }}
+        env:
+        - name: APP_NAME
+          value: "{{ .Values.directus.env.APP_NAME }}"
+        - name: KEY
+          value: "{{ .Values.directus.env.KEY }}"
+        - name: SECRET
+          value: "{{ .Values.directus.env.SECRET }}"
+        - name: ADMIN_EMAIL
+          value: "{{ .Values.directus.env.ADMIN_EMAIL }}"
+        - name: ADMIN_PASSWORD
+          value: "{{ .Values.directus.env.ADMIN_PASSWORD }}"
+        - name: CONFIG_PATH
+          value: "{{ .Values.directus.env.CONFIG_PATH }}"
+        - name: DB_CLIENT
+          value: "{{ .Values.directus.env.DB_CLIENT }}"
+        - name: DB_HOST
+          value: "{{ .Values.directus.env.DB_HOST }}"
+        - name: DB_PORT
+          value: "{{ .Values.directus.env.DB_PORT }}"
+        - name: DB_DATABASE
+          value: "{{ .Values.directus.env.DB_DATABASE }}"
+        - name: DB_USER
+          value: "{{ .Values.directus.env.DB_USER }}"
+        - name: DB_PASSWORD
+          value: "{{ .Values.directus.env.DB_PASSWORD }}"
+        - name: WEBSOCKETS_ENABLED
+          value: "{{ .Values.directus.env.WEBSOCKETS_ENABLED }}"
+        resources:
+          requests:
+            cpu: {{ .Values.directus.resources.requests.cpu }}
+            memory: {{ .Values.directus.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.directus.resources.limits.cpu }}
+            memory: {{ .Values.directus.resources.limits.memory }}

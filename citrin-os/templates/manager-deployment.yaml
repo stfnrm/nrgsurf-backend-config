@@ -1,0 +1,37 @@
+{{- if .Values.everest }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.manager.name | quote }}
+  namespace: {{ .Values.namespace.name | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.manager.name | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.manager.name | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.manager.name | quote }}
+        image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
+        imagePullPolicy: {{ .Values.manager.image.pullPolicy | quote }}
+        ports:
+        - containerPort: {{ .Values.manager.service.targetPort }}
+        env:
+        - name: MQTT_SERVER_ADDRESS
+          value: {{ .Values.mqtt.name | quote }}
+        - name: EVEREST_TARGET_URL
+          value: {{ .Values.manager.env.targetUrl | quote }}
+        - name: MQTT_SERVER_PORT
+          value: {{ .Values.manager.env.mqttPort | quote }}
+        resources:
+          requests:
+            cpu: {{ .Values.manager.resources.requests.cpu }}
+            memory: {{ .Values.manager.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.manager.resources.limits.cpu }}
+            memory: {{ .Values.manager.resources.limits.memory }}
+{{- end }}

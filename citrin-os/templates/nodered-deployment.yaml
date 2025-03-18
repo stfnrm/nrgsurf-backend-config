@@ -1,0 +1,35 @@
+{{- if .Values.everest }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nodered.name | quote }}
+  namespace: {{ .Values.namespace.name | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.nodered.name | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.nodered.name | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.nodered.name | quote }}
+        image: "{{ .Values.nodered.image.repository }}:{{ .Values.nodered.image.tag }}"
+        imagePullPolicy: {{ .Values.nodered.image.pullPolicy | quote }}
+        ports:
+        - containerPort: {{ .Values.nodered.service.targetPort }}
+        env:
+        - name: MQTT_SERVER_ADDRESS
+          value: {{ .Values.mqtt.name | quote }}
+        - name: FLOWS
+          value: {{ .Values.nodered.env.flows | quote }}
+        resources:
+          requests:
+            cpu: {{ .Values.nodered.resources.requests.cpu }}
+            memory: {{ .Values.nodered.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.nodered.resources.limits.cpu }}
+            memory: {{ .Values.nodered.resources.limits.memory }}
+{{- end }}

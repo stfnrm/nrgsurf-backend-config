@@ -1,0 +1,15 @@
+{{- if .Values.everest }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.nodered.name | quote }}
+  namespace: {{ .Values.namespace.name | quote }}
+spec:
+  selector:
+    app: {{ .Values.nodered.name | quote }}
+  ports:
+  - port: {{ .Values.nodered.service.port }}
+    targetPort: {{ .Values.nodered.service.targetPort }}
+    protocol: TCP
+  type: ClusterIP
+{{- end }}

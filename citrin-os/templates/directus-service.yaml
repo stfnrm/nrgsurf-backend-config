@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.directus.name }}
+  namespace: {{ .Values.namespace.name }}
+spec:
+  selector:
+    app: {{ .Values.directus.name }}
+  ports:
+  - port: {{ .Values.directus.port }}
+    targetPort: {{ .Values.directus.port }}

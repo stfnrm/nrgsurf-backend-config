@@ -1,0 +1,32 @@
+{{- if .Values.citrinosIngress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.citrinosIngress.name }}
+  namespace: {{ .Values.namespace | default "default" }}
+  annotations:
+    cert-manager.io/cluster-issuer: "{{ .Values.citrinosIngress.clusterIssuer }}"
+spec:
+  ingressClassName: {{ .Values.citrinosIngress.className }}
+  tls:
+    - hosts:
+{{- range .Values.citrinosIngress.tlsHosts }}
+        - {{ . | quote }}
+{{- end }}
+      secretName: {{ .Values.citrinosIngress.secretName }}
+  rules:
+{{- range .Values.citrinosIngress.rules }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+{{- range .paths }}
+          - pathType: {{ .pathType }}
+            path: {{ .path | quote }}
+            backend:
+              service:
+                name: {{ .service.name }}
+                port:
+                  number: {{ .service.port }}
+{{- end }}
+{{- end }}
+{{- end }}

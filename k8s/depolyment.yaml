@@ -1,0 +1,123 @@
+# MQTT Server Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqtt-server
+  namespace: citrinos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mqtt-server
+  template:
+    metadata:
+      labels:
+        app: mqtt-server
+    spec:
+      containers:
+      - name: mqtt-server
+        image: ghcr.io/everest/everest-demo/mqtt-server:0.0.16
+        imagePullPolicy: IfNotPresent
+---
+# MQTT Server Service (for internal communication)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mqtt-server
+  namespace: citrinos
+spec:
+  selector:
+    app: mqtt-server
+  ports:
+  - port: 1883
+    targetPort: 1883
+    protocol: TCP
+  type: ClusterIP
+---
+# Manager Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manager
+  namespace: citrinos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: manager
+  template:
+    metadata:
+      labels:
+        app: manager
+    spec:
+      containers:
+      - name: manager
+        image: jyothiram266/everest:v1.0.0 # This needs to be replaced with the actual image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8888
+        env:
+        - name: MQTT_SERVER_ADDRESS
+          value: mqtt-server
+        - name: EVEREST_TARGET_URL
+          value: http://citrine:8081
+        - name: MQTT_SERVER_PORT
+          value: "1883"
+---
+# Manager Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: manager
+  namespace: citrinos
+spec:
+  selector:
+    app: manager
+  ports:
+  - port: 8888
+    targetPort: 8888
+    protocol: TCP
+  type: ClusterIP
+---
+# NodeRed Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodered
+  namespace: citrinos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodered
+  template:
+    metadata:
+      labels:
+        app: nodered
+    spec:
+      containers:
+      - name: nodered
+        image: ghcr.io/everest/everest-demo/nodered:0.0.16
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 1880
+        env:
+        - name: MQTT_SERVER_ADDRESS
+          value: mqtt-server
+        - name: FLOWS
+          value: /config/config-sil-two-evse-flow.json
+---
+# NodeRed Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodered
+  namespace: citrinos
+spec:
+  selector:
+    app: nodered
+  ports:
+  - port: 1880
+    targetPort: 1880
+    protocol: TCP
+  type: ClusterIP

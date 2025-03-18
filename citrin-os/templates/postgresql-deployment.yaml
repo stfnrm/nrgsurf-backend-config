@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocpp-db
+  namespace: {{ .Values.namespace.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ocpp-db
+  template:
+    metadata:
+      labels:
+        app: ocpp-db
+    spec:
+      initContainers:
+      - name: init-pgdata-dir
+        image: busybox
+        command: [ 'sh', '-c', 'mkdir -p /var/lib/postgresql/data/pgdata && chown -R 999:999 /var/lib/postgresql/data/pgdata' ]
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+      containers:
+      - name: postgis
+        image: citrineos/postgis:v1.1.0
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "citrine"
+        - name: POSTGRES_USER
+          value: "citrine"
+        - name: POSTGRES_PASSWORD
+          value: "citrine"
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/pgdata"
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        livenessProbe:
+          exec:
+            command: [ "pg_isready", "--username=citrine" ]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 10
+          failureThreshold: 5
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pvc
