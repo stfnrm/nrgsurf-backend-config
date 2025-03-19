@@ -9,11 +9,11 @@ spec:
   ingressClassName: nginx # 👈 This is the correct way now
   tls:
   - hosts:
-    - dashboard.ev.vossmoos.com
-    - everest.ev.vossmoos.com
+    - dashboard.nrgsurf.de
+    - everest.nrgsurf.de
     secretName: citrinos-private-key
   rules:
-  - host: "dashboard.ev.vossmoos.com"
+  - host: "dashboard.nrgsurf.de"
     http:
       paths:
       - pathType: Prefix
@@ -23,7 +23,7 @@ spec:
             name: directus
             port:
               number: 8055
-  - host: "everest.ev.vossmoos.com"
+  - host: "everest.nrgsurf.de"
     http:
       paths:
       - pathType: Prefix
