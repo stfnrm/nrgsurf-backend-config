@@ -40,7 +40,7 @@ kubectl get pods -n citrin-os
 you can upgrade the values and to reflect the changes run the following command accordingly
 
 ```
-helm upgrade <HELM_NAME> ./citrin-os --values ./citrin-os/values-<dev-prod>.yaml 
+helm upgrade --install dev-citrinos ./citrin-os --values ./citrin-os/values-dev.yaml
 ```
 #### 🔗 Enable Loki for Logging
 To deploy Loki (along with Promtail and Grafana, if needed), run:
@@ -58,7 +58,7 @@ If any changes are made in values-dev.yaml or values-prod.yaml
 To upgrade the Helm release with new configurations:
 
 ```
-helm upgrade <HELM_NAME> ./citrin-os --values ./citrin-os/values-<dev-prod>.yaml 
+helm install dev-citrinos ./citrin-os --values ./citrin-os/values-dev.yaml 
 ```
 
 ## 5️⃣ Cleanup the Deployment
