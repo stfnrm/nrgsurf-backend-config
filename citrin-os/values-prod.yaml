@@ -42,10 +42,10 @@ directus:
   port: 8055 # Service port number
   resources:
     requests:
-      cpu: "500m"
+      cpu: "0.5"
       memory: "500Mi"
     limits:
-      cpu: "1024"
+      cpu: "1"
       memory: "900Mi"
   livenessProbe:
     # Health check configuration
@@ -79,7 +79,7 @@ citrine:
   replicas: 1 # Number of pod replicas
   resources:
     requests:
-      cpu: "500m"
+      cpu: "0.5"
       memory: "900Mi"
     limits:
       cpu: "1"
