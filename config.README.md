@@ -133,4 +133,9 @@ This guide explains the main configurations in `values.yaml` for running CitrinO
   ```
   - Allows external access to Grafana if enabled.  
 
+### **9. Apply changes**
+  ```yaml
+    helm upgrade --install dev-citrinos ./citrin-os --values ./citrin-os/values-dev.yaml
+  ```
+
 This guide highlights the key configurations for deploying CitrinOS in development. Adjust values as needed for your environment. 🚀
