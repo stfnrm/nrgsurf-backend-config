@@ -10,8 +10,8 @@ spec:
   tls:
   - hosts:
     - dashboard.nrgsurf.de
-    - everest.nrgsurf.de
-    secretName: citrinos-private-key
+    #- everest.nrgsurf.de
+    secretName: citrinosnrg-private-key
   rules:
   - host: "dashboard.nrgsurf.de"
     http:
@@ -23,13 +23,13 @@ spec:
             name: directus
             port:
               number: 8055
-  - host: "everest.nrgsurf.de"
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: nodered
-            port:
-              number: 1880
+  # - host: "everest.nrgsurf.de"
+  #   http:
+  #     paths:
+  #     - pathType: Prefix
+  #       path: "/"
+  #       backend:
+  #         service:
+  #           name: nodered
+  #           port:
+  #             number: 1880
