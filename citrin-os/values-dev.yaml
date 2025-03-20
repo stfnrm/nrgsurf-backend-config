@@ -43,10 +43,10 @@ directus:
   resources:
     requests:
       cpu: "250m"
-      memory: "250Mi"
+      memory: "512Mi"
     limits:
-      cpu: "500"
-      memory: "900Mi"
+      cpu: "500m"
+      memory: "1024Mi"
   livenessProbe:
     # Health check configuration
     path: /server/health # Health check endpoint
@@ -182,11 +182,11 @@ manager:
     mqttPort: "1883"
   resources:
     requests:
-      cpu: "300m"
-      memory: "600Mi"
+      cpu: "250m"
+      memory: "512Mi"
     limits:
-      cpu: "600m"
-      memory: "1.2Gi"
+      cpu: "500m"
+      memory: "1Gi"
 
 nodered:
   name: nodered
@@ -213,30 +213,30 @@ citrinosIngress:
   clusterIssuer: "letsencrypt-prod"
   className: nginx
   tlsHosts:
-  - dashboard.ev.vossmoos.com
-  - everest.ev.vossmoos.com
+  - dashboard.nrgsurf.de
+  #- everest.ev.vossmoos.com
   secretName: citrinos-private-key
   rules:
-  - host: dashboard.ev.vossmoos.com
+  - host: dashboard.nrgsurf.de
     paths:
     - path: /
       pathType: Prefix
       service:
         name: directus
         port: 8055
-  - host: everest.ev.vossmoos.com
-    paths:
-    - path: /
-      pathType: Prefix
-      service:
-        name: nodered
-        port: 1880
+  # - host: everest.ev.vossmoos.com
+  #   paths:
+  #   - path: /
+  #     pathType: Prefix
+  #     service:
+  #       name: nodered
+  #       port: 1880
 
 grafanaIngress:
   enabled: false
   clusterIssuer: "letsencrypt-prod"
   className: nginx
-  host: grafana.ev.vossmoos.com
+  host: grafana.nrgsurf.de
   secretName: grafana-tls-cert
   service:
     port: 3000
