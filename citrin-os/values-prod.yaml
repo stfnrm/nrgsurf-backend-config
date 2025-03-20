@@ -182,10 +182,10 @@ manager:
     mqttPort: "1883"
   resources:
     requests:
-      cpu: "300m"
+      cpu: "0.5"
       memory: "600Mi"
     limits:
-      cpu: "600m"
+      cpu: "0.5"
       memory: "1.2Gi"
 
 nodered:
@@ -201,10 +201,10 @@ nodered:
     flows: "/config/config-sil-two-evse-flow.json"
   resources:
     requests:
-      cpu: "500m"
+      cpu: "0.5"
       memory: "800Mi"
     limits:
-      cpu: "750m"
+      cpu: "0.5"
       memory: "1Gi"
 
 citrinosIngress:
@@ -214,7 +214,7 @@ citrinosIngress:
   className: nginx
   tlsHosts:
   - dashboard.nrgsurf.de
-  - everest.nrgsurf.de
+  #- everest.nrgsurf.de
   secretName: citrinos-privatenrg-key
   rules:
   - host: dashboard.nrgsurf.de
@@ -224,13 +224,13 @@ citrinosIngress:
       service:
         name: directus
         port: 8055
-  - host: everest.nrgsurf.de
-    paths:
-    - path: /
-      pathType: Prefix
-      service:
-        name: nodered
-        port: 1880
+  # - host: everest.nrgsurf.de
+  #   paths:
+  #   - path: /
+  #     pathType: Prefix
+  #     service:
+  #       name: nodered
+  #       port: 1880
 
 grafanaIngress:
   enabled: false
