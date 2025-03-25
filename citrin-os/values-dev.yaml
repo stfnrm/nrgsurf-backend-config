@@ -26,7 +26,7 @@ kube-prometheus-stack:
   alertmanager:
     enabled: true
 
-everest: true
+everest: false
 
 # Namespace configuration - Defines the Kubernetes namespace for all components
 namespace:
