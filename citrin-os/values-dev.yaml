@@ -233,10 +233,10 @@ citrinosIngress:
   #       port: 1880
 
 grafanaIngress:
-  enabled: false
+  enabled: true
   clusterIssuer: "letsencrypt-prod"
   className: nginx
   host: grafana.nrgsurf.de
-  secretName: grafana-tls-cert
+  secretName: grafananrg-tls-cert
   service:
     port: 3000
