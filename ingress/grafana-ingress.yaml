@@ -9,10 +9,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - grafana.ev.vossmoos.com
+    - grafana.nrgsurf.de
     secretName: grafana-tls-cert # This will be automatically created by cert-manager
   rules:
-  - host: grafana.ev.vossmoos.com
+  - host: grafana.nrgsurf.de
     http:
       paths:
       - pathType: Prefix
