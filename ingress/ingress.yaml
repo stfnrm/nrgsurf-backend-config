@@ -5,6 +5,13 @@ metadata:
   namespace: citrinos
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "Upgrade";
 spec:
   ingressClassName: nginx # 👈 This is the correct way now
   tls:
@@ -23,6 +30,13 @@ spec:
             name: directus
             port:
               number: 8055
+      - path: /ws
+        pathType: Prefix
+        backend:
+          service:
+            name: citrine
+            port:
+              number: 8081
   # - host: "everest.nrgsurf.de"
   #   http:
   #     paths:
