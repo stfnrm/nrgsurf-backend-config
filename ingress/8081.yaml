@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: citrineos-ingress
+  namespace: citrinos
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "citrine"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "8081.nrgsurf.de"
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: citrine
+            port:
+              number: 8081
+  tls:
+  - hosts:
+    - "8081.nrgsurf.de"
+    secretName: citrineos-8081a-tls
