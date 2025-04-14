@@ -22,14 +22,8 @@ git clone https://github.com/stfnrm/nrgsurf-backend-config.git
 
 Install the Helm chart for your environment:
 
-For Development:
 ```bash
 helm install dev-citrinos ./citrin-os --values ./citrin-os/values-dev.yaml
-```
-
-For Production:
-```bash
-helm install prod-citrinos ./citrin-os --values ./citrin-os/values-prod.yaml
 ```
 
 Verify deployment status:
