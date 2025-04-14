@@ -1,4 +1,4 @@
-x# CitrinOS Development Environment Configuration Guide
+# CitrinOS Development Environment Configuration Guide
 
 This guide explains how to configure and deploy CitrinOS in a development environment using Helm charts and Kubernetes.
 
